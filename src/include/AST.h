@@ -11,12 +11,13 @@ typedef struct AST {
     AST_STMT,
     AST_NOOP,
     AST_DEF_TYPE,
-    AST_VAR_CALL
+    AST_ID
   } type;
 
   list_T *children;
   char *name;
   struct AST *value;
+  int data_type;
 } AST_T;
 
 AST_T *init_ast(int type);
