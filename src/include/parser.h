@@ -18,7 +18,9 @@ AST_T *parser_parse_fn(parser_T *parser);
 
 AST_T *parser_parse_var(parser_T *parser);
 
-AST_T *parser_parse_id(parser_T *parser);
+AST_T *parser_parse_id(parser_T *parser, int fn_name);
+
+AST_T *parser_parse_num(parser_T *parser);
 
 AST_T *parser_parse_block(parser_T *parser);
 

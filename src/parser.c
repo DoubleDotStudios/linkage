@@ -1,5 +1,6 @@
 #include "include/parser.h"
 #include "include/AST.h"
+#include "include/lexer.h"
 #include "include/list.h"
 #include "include/token.h"
 #include "include/types.h"
@@ -32,8 +33,7 @@ AST_T *parser_parse_fn(parser_T *parser) {
   parser_eat(parser, TK_FN);
 
   AST_T *ast = init_ast(AST_FN_DEF);
-
-  AST_T *id = parser_parse_id(parser);
+  AST_T *id = parser_parse_id(parser, 1);
   char *name = id->name;
 
   if (name == NULL) {
@@ -54,7 +54,7 @@ AST_T *parser_parse_fn(parser_T *parser) {
 AST_T *parser_parse_var(parser_T *parser) {
   parser_eat(parser, TK_VAR);
 
-  AST_T *id = parser_parse_id(parser);
+  AST_T *id = parser_parse_id(parser, 0);
   char *name = id->name;
 
   if (name == NULL) {
@@ -103,7 +103,17 @@ AST_T *parser_parse_block(parser_T *parser) {
   return ast;
 }
 
-AST_T *parser_parse_id(parser_T *parser) {
+AST_T *parser_parse_num(parser_T *parser) {
+  int int_val = atoi(parser->token->value);
+  parser_eat(parser, TK_NUM);
+
+  AST_T *ast = init_ast(AST_NUM);
+  ast->int_val = int_val;
+
+  return ast;
+}
+
+AST_T *parser_parse_id(parser_T *parser, int fn_name) {
   if (parser->token->type != TK_ID) {
     printf("\e[31m[Parser Error]: Expected identifier but found token %s "
            "instead.\e[0m\n",
@@ -131,6 +141,11 @@ AST_T *parser_parse_id(parser_T *parser) {
         parser_eat(parser, TK_ID);
         parser_eat(parser, TK_TYPE);
       }
+    }
+  } else {
+    if (parser->token->type == TK_LPAREN && fn_name != 1) {
+      ast->type = AST_FN_CALL;
+      ast->value = parser_parse_args(parser);
     }
   }
   return ast;
@@ -189,7 +204,9 @@ AST_T *parser_parse_paren(parser_T *parser) {
 AST_T *parser_parse_expr(parser_T *parser) {
   switch (parser->token->type) {
   case TK_ID:
-    return parser_parse_id(parser);
+    return parser_parse_id(parser, 0);
+  case TK_NUM:
+    return parser_parse_num(parser);
   case TK_FN:
     return parser_parse_fn(parser);
   case TK_VAR:
