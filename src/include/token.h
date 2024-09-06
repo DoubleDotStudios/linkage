@@ -19,9 +19,7 @@ typedef struct TOKENS {
     TK_EQ,    //
     TK_COLON, //
     TK_COMMA, //
-
-    TK_LANGLE,
-    TK_RANGLE,
+    TK_TYPE,  //
 
     TK_PLUS, //
     TK_MIN,  //

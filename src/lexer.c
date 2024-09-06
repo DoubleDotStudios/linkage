@@ -171,6 +171,8 @@ token_T *lexer_next_token(lexer_T *lexer) {
       return lexer_advance_with(lexer, init_token(",", TK_COMMA));
     case ':':
       return lexer_advance_with(lexer, init_token(":", TK_COLON));
+    case '|':
+      return lexer_advance_with(lexer, init_token("|", TK_TYPE));
 
     // Special characters
     case '\0':

@@ -43,11 +43,8 @@ char *tok_t_to_str(int type) {
     return "TK_COLON";
   case TK_COMMA:
     return "TK_COMMA";
-
-  case TK_LANGLE:
-    return "TK_LANGLE";
-  case TK_RANGLE:
-    return "TK_RANGLE";
+  case TK_TYPE:
+    return "TK_TYPE";
 
   case TK_PLUS:
     return "TK_PLUS";

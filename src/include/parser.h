@@ -20,6 +20,10 @@ AST_T *parser_parse_var(parser_T *parser);
 
 AST_T *parser_parse_id(parser_T *parser);
 
+AST_T *parser_parse_block(parser_T *parser);
+
+AST_T *parser_parse_args(parser_T *parser);
+
 AST_T *parser_parse_paren(parser_T *parser);
 
 AST_T *parser_parse_expr(parser_T *parser);
