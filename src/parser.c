@@ -45,8 +45,6 @@ AST_T *parser_parse_fn(parser_T *parser) {
     exit(1);
   }
 
-  parser_parse_paren(parser);
-
   printf("--> fn %s\n", name);
 
   // Proceed with AST creation
@@ -139,13 +137,13 @@ AST_T *parser_parse_paren(parser_T *parser) {
 AST_T *parser_parse_expr(parser_T *parser) {
   switch (parser->token->type) {
   case TK_ID:
-    parser_parse_id(parser);
+    return parser_parse_id(parser);
   case TK_FN:
-    parser_parse_fn(parser);
+    return parser_parse_fn(parser);
   case TK_VAR:
-    parser_parse_var(parser);
+    return parser_parse_var(parser);
   case TK_LPAREN:
-    parser_parse_paren(parser);
+    return parser_parse_paren(parser);
   default: {
     printf("\e[31m[Parser Error]: Unexpected token %s.\e[0m\n",
            tok_t_to_str(parser->token->type));
