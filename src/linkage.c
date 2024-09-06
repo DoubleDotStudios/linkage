@@ -10,6 +10,8 @@ void lk_compile(char *src) {
   parser_T *parser = init_parser(lexer);
   AST_T *root = parser_parse(parser);
 
+  printf("%d\n", root->children->size);
+
   token_T *tok = 0;
 
   while ((tok = lexer_next_token(lexer))->type != TK_EOF) {

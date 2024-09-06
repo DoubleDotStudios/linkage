@@ -1,3 +1,6 @@
+;hello
+;hi
+
 fn main (argc: num, argv: arr<str>) : int {
   return 0
 }

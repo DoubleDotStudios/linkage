@@ -14,5 +14,15 @@ token_T *parser_eat(parser_T *parser, int type);
 
 AST_T *parser_parse(parser_T *parser);
 
+AST_T *parser_parse_fn(parser_T *parser);
+
+AST_T *parser_parse_var(parser_T *parser);
+
+AST_T *parser_parse_var_call(parser_T *parser);
+
+char *parser_parse_id(parser_T *parser);
+
+AST_T *parser_parse_expr(parser_T *parser);
+
 AST_T *parser_parse_compound(parser_T *parser);
 #endif // !LK_PARSER_H

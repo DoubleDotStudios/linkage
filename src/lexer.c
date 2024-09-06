@@ -49,6 +49,8 @@ void lexer_skip_whitespace(lexer_T *lexer) {
 }
 
 token_T *lexer_parse_id(lexer_T *lexer) {
+  int tk = TK_ID;
+
   char *val = calloc(1, sizeof(char));
 
   while (isalnum(lexer->c)) {
@@ -56,7 +58,11 @@ token_T *lexer_parse_id(lexer_T *lexer) {
     strcat(val, (char[]){lexer->c, 0});
     lexer_advance(lexer);
   }
-  return init_token(val, TK_ID);
+
+  if (strcmp(val, "fn") == 0)
+    tk = TK_FN;
+
+  return init_token(val, tk);
 }
 
 token_T *lexer_parse_number(lexer_T *lexer) {
@@ -87,6 +93,12 @@ token_T *lexer_next_token(lexer_T *lexer) {
             lexer, lexer_advance_with(lexer, init_token("==", TK_EQEQ)));
       return lexer_advance_with(lexer, init_token("=", TK_EQ));
     } break;
+    case ';': {
+      if (lexer_peek(lexer, 1) == ';')
+        return lexer_advance_with(
+            lexer, lexer_advance_with(lexer, init_token(";;", TK_CONST)));
+      return lexer_advance_with(lexer, init_token(";", TK_VAR));
+    }
 
     // Comparison
     case '>': {
