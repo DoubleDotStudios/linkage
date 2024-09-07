@@ -45,7 +45,7 @@ AST_T *parser_parse_fn(parser_T *parser) {
 
   parser_parse_args(parser);
 
-  ast->value = parser_parse_block(parser);
+  ast->value = parser_parse_compound(parser);
 
   ast->name = name;
   return ast;
@@ -77,8 +77,6 @@ AST_T *parser_parse_var(parser_T *parser) {
   } else {
     ast->value = 0;
   }
-
-  printf("--> var %s = %p\n", name, ast->value);
 
   return ast;
 }
@@ -222,9 +220,22 @@ AST_T *parser_parse_expr(parser_T *parser) {
 }
 
 AST_T *parser_parse_compound(parser_T *parser) {
+  unsigned int should_close = 0;
+
+  if (parser->token->type == TK_LBRACE) {
+    parser_eat(parser, TK_LBRACE);
+    should_close = 1;
+  }
+
   AST_T *compound = init_ast(AST_COMPOUND);
-  while (parser->token->type != TK_EOF) {
+
+  while (parser->token->type != TK_EOF && parser->token->type != TK_RBRACE) {
     list_push(compound->children, parser_parse_expr(parser));
+  }
+
+  if (should_close == 1) {
+    parser_eat(parser, TK_RBRACE);
+    should_close = 0;
   }
 
   return compound;
