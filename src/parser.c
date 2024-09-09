@@ -152,9 +152,10 @@ AST_T *parser_parse_id(parser_T *parser, int fn_name) {
 AST_T *parser_parse_args(parser_T *parser) {
   parser_eat(parser, TK_LPAREN);
 
-  AST_T *ast = init_ast(AST_COMPOUND);
+  AST_T *ast = init_ast(AST_FN_ARGS);
 
-  list_push(ast->children, parser_parse_expr(parser));
+  if (parser->token->type != TK_RPAREN)
+    list_push(ast->children, parser_parse_expr(parser));
 
   while (parser->token->type == TK_COMMA) {
     parser_eat(parser, TK_COMMA);

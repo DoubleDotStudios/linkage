@@ -6,7 +6,7 @@ AST_T *init_ast(int type) {
   AST_T *ast = calloc(1, sizeof(struct AST));
   ast->type = type;
 
-  if (type == AST_COMPOUND)
+  if (type == AST_COMPOUND || type == AST_FN_ARGS)
     ast->children = init_list(sizeof(struct AST *));
 
   return ast;
