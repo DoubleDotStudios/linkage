@@ -145,11 +145,11 @@ token_T *lexer_next_token(lexer_T *lexer) {
             lexer, lexer_advance_with(lexer, init_token("^^", TK_SQR)));
       return lexer_advance_with(lexer, init_token("^", TK_POW));
     } break;
-    case '#': {
-      if (lexer_peek(lexer, 1) == '#')
+    case '`': {
+      if (lexer_peek(lexer, 1) == '`')
         return lexer_advance_with(
-            lexer, lexer_advance_with(lexer, init_token("##", TK_SQRT)));
-      return lexer_advance_with(lexer, init_token("#", TK_ROOT));
+            lexer, lexer_advance_with(lexer, init_token("``", TK_SQRT)));
+      return lexer_advance_with(lexer, init_token("`", TK_ROOT));
     } break;
 
     // Brackets

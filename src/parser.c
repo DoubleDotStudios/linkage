@@ -133,11 +133,11 @@ AST_T *parser_parse_id(parser_T *parser, int fn_name) {
 
       parser_eat(parser, TK_ID);
 
-      if (parser->token->type == TK_TYPE) {
-        parser_eat(parser, TK_TYPE);
+      if (parser->token->type == TK_LT) {
+        parser_eat(parser, TK_LT);
         ast->data_type += typename_to_int(parser->token->value);
         parser_eat(parser, TK_ID);
-        parser_eat(parser, TK_TYPE);
+        parser_eat(parser, TK_GT);
       }
     }
   } else {
@@ -179,11 +179,11 @@ AST_T *parser_parse_args(parser_T *parser) {
 
       parser_eat(parser, TK_ID);
 
-      if (parser->token->type == TK_TYPE) {
-        parser_eat(parser, TK_TYPE);
+      if (parser->token->type == TK_LT) {
+        parser_eat(parser, TK_LT);
         ast->data_type += typename_to_int(parser->token->value);
         parser_eat(parser, TK_ID);
-        parser_eat(parser, TK_TYPE);
+        parser_eat(parser, TK_GT);
       }
     }
   }

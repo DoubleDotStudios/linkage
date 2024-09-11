@@ -1,4 +1,5 @@
 #include "include/as_frontend.h"
+#include "include/AST.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -7,7 +8,6 @@ char *as_f_compound(AST_T *ast) {
   char *val = calloc(1, sizeof(char));
   for (int i = 0; i < (int)ast->children->size; i++) {
     AST_T *child = (AST_T *)ast->children->items[i];
-    printf("%s", child->name);
     char *next_val = as_f(child);
     val = realloc(val, (strlen(next_val) + 1) * sizeof(char));
     strcat(val, next_val);
@@ -29,7 +29,7 @@ char *as_f_fn_def(AST_T *ast) {
 }
 
 char *as_f_fn_call(AST_T *ast) {
-  printf("here\n");
+  printf("here fn call\n");
 
   char *s = calloc(1, sizeof(char));
 
@@ -70,16 +70,18 @@ char *as_f(AST_T *ast) {
   char *val = calloc(1, sizeof(char));
   char *next_val = 0;
 
-  const char *section_text = ".section.text\n"
-                             ".global _start:\n"
-                             "_start:\n"
-                             "  call main\n"
-                             "  mov %%eax, %%ebx\n"
-                             "  mov $1, %%eax"
-                             "  int $0x80\n";
-
-  val = realloc(val, (strlen(section_text) + 1) * sizeof(char));
-  strcat(val, section_text);
+  // printf("%i\n", ast->type);
+  //
+  // const char *section_text = ".section.text\n"
+  //                            ".global _start:\n"
+  //                            "_start:\n"
+  //                            "  call main\n"
+  //                            "  mov %%eax, %%ebx\n"
+  //                            "  mov $1, %%eax"
+  //                            "  int $0x80\n";
+  //
+  // val = realloc(val, (strlen(section_text) + 1) * sizeof(char));
+  // strcat(val, section_text);
 
   switch (ast->type) {
   case AST_COMPOUND:
@@ -95,7 +97,7 @@ char *as_f(AST_T *ast) {
     next_val = as_f_fn_call(ast);
     break;
   case AST_FN_ARGS:
-    next_val = as_f_args(ast);
+    next_val = as_f_compound(ast);
     break;
   case AST_NUM:
     next_val = as_f_compound(ast);

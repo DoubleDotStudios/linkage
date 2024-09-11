@@ -1,3 +1,2 @@
-fn main() {
-  return(0)
-}
+|rust|{ print!("Hello, World!"); }
+|cpp|{ std::cout << "Hello, World!" << std::endl; }
