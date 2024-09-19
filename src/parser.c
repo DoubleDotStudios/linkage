@@ -43,7 +43,7 @@ AST_T *parser_parse_fn(parser_T *parser) {
     exit(1);
   }
 
-  parser_parse_args(parser);
+  ast->args = parser_parse_args(parser);
 
   ast->value = parser_parse_compound(parser);
 
@@ -193,9 +193,6 @@ AST_T *parser_parse_args(parser_T *parser) {
 
 AST_T *parser_parse_paren(parser_T *parser) {
   AST_T *ast = init_ast(AST_COMPOUND);
-
-  ast->value = 0;
-  ast->name = "";
 
   return ast;
 }

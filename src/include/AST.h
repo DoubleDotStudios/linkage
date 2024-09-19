@@ -23,6 +23,7 @@ typedef struct AST {
   struct AST *value;
   int int_val;
   int data_type;
+  struct AST *args;
 } AST_T;
 
 AST_T *init_ast(int type);
