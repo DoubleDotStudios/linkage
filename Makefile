@@ -15,3 +15,5 @@ clean:
 	- rm *.a
 	- rm src/*.o
 	- rm $(exec)
+	- rm a
+	- rm *.s
