@@ -191,6 +191,15 @@ AST_T *parser_parse_args(parser_T *parser) {
   return ast;
 }
 
+AST_T *parser_parse_ret(parser_T *parser) {
+  AST_T *ast = init_ast(AST_RET);
+
+  parser_eat(parser, TK_RET);
+  ast->int_val = parser_parse_num(parser)->int_val;
+
+  return ast;
+}
+
 AST_T *parser_parse_paren(parser_T *parser) {
   AST_T *ast = init_ast(AST_COMPOUND);
 
@@ -209,6 +218,8 @@ AST_T *parser_parse_expr(parser_T *parser) {
     return parser_parse_var(parser);
   case TK_LPAREN:
     return parser_parse_paren(parser);
+  case TK_RET:
+    return parser_parse_ret(parser);
   default: {
     printf("\e[31m[Parser Error]: Unexpected token %s.\e[0m\n",
            tok_t_to_str(parser->token->type));

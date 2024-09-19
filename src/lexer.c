@@ -58,6 +58,8 @@ token_T *lexer_parse_id(lexer_T *lexer) {
     strcat(val, (char[]){lexer->c, 0});
     lexer_advance(lexer);
   }
+  if (strcmp(val, "return") == 0)
+    tk = TK_RET;
 
   if (strcmp(val, "fn") == 0)
     tk = TK_FN;

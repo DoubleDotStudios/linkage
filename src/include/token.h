@@ -3,11 +3,12 @@
 typedef struct TOKENS {
   char *value;
   enum {
-    TK_FN,
-    TK_ID,  //
-    TK_NUM, //
-    TK_VAR,
-    TK_CONST,
+    TK_FN,    //
+    TK_RET,   //
+    TK_ID,    //
+    TK_NUM,   //
+    TK_VAR,   //
+    TK_CONST, //
 
     TK_LPAREN, //
     TK_RPAREN, //

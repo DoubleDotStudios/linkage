@@ -12,6 +12,7 @@ typedef struct AST {
     AST_NOOP,
     AST_DEF_TYPE,
     AST_ID,
+    AST_RET,
     AST_FN_CALL,
     AST_VAR_CALL,
     AST_NUM,

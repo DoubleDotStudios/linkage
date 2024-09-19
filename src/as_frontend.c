@@ -40,18 +40,18 @@ char *as_f_fn_def(AST_T *ast) {
 char *as_f_fn_call(AST_T *ast) {
   char *s = calloc(1, sizeof(char));
 
-  if (strcmp(ast->name, "return") == 0) {
-    AST_T *arg1 = (AST_T *)ast->value->children->size
-                      ? ast->value->children->items[0]
-                      : (void *)0;
-    const char *template = "  mov $%d, %%eax\n"
-                           "  ret\n";
-
-    char *ret = calloc(strlen(template) + 128, sizeof(char));
-    sprintf(ret, template, arg1 ? arg1->int_val : 0);
-    s = realloc(s, (strlen(ret) + 1) * sizeof(char));
-    strcat(s, ret);
-  }
+  // if (strcmp(ast->name, "return") == 0) {
+  //   AST_T *arg1 = (AST_T *)ast->value->children->size
+  //                     ? ast->value->children->items[0]
+  //                     : (void *)0;
+  //   const char *template = "  movl $%d, %%eax\n"
+  //                          "  ret\n";
+  //
+  //   char *ret = calloc(strlen(template) + 128, sizeof(char));
+  //   sprintf(ret, template, arg1 ? arg1->int_val : 0);
+  //   s = realloc(s, (strlen(ret) + 1) * sizeof(char));
+  //   strcat(s, ret);
+  // }
 
   return s;
 }
@@ -79,13 +79,27 @@ char *as_f_id(AST_T *ast) {
   return s;
 }
 
+char *as_f_ret(AST_T *ast) {
+  char *s = calloc(1, sizeof(char));
+
+  const char *template = "  movl $%d, %%eax\n"
+                         "  ret\n";
+
+  char *ret = calloc(strlen(template) + 128, sizeof(char));
+  sprintf(ret, template, ast->int_val ? ast->int_val : 0);
+  s = realloc(s, (strlen(ret) + 1) * sizeof(char));
+  strcat(s, ret);
+
+  return s;
+}
+
 char *as_f_root(AST_T *ast) {
   const char *section_text = ".section .text\n"
                              ".global _start\n"
                              "_start:\n"
                              "  call main\n"
-                             "  mov \%eax, \%ebx\n"
-                             "  mov $1, \%eax\n"
+                             "  movl \%eax, \%ebx\n"
+                             "  movl $1, \%eax\n"
                              "  int $0x80\n\n";
 
   char *val = (char *)calloc((strlen(section_text) + 128), sizeof(char));
@@ -124,6 +138,9 @@ char *as_f(AST_T *ast) {
     break;
   case AST_ID:
     next_val = as_f_id(ast);
+    break;
+  case AST_RET:
+    next_val = as_f_ret(ast);
     break;
   default:
     printf(

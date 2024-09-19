@@ -38,8 +38,8 @@ void lk_compile(char *src) {
   char *s = as_f_root(root);
 
   lk_write_file("a.s", s);
-  sh("as a.s -o a.o");
-  sh("ld a.o -o a");
+  sh("as --32 a.s -o a.o");
+  sh("ld a.o -o a -m elf_i386");
 }
 
 void lk_compile_file(const char *filename) {
