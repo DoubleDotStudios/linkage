@@ -195,7 +195,11 @@ AST_T *parser_parse_ret(parser_T *parser) {
   AST_T *ast = init_ast(AST_RET);
 
   parser_eat(parser, TK_RET);
-  ast->int_val = parser_parse_num(parser)->int_val;
+
+  if (parser->token->type == TK_NUM)
+    ast->value = parser_parse_num(parser);
+  else
+    ast->value = parser_parse_id(parser, 0);
 
   return ast;
 }

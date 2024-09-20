@@ -17,12 +17,27 @@ char *as_f_compound(AST_T *ast) {
   return val;
 }
 
-char *as_f_var(AST_T *ast) {}
+char *as_f_var(AST_T *ast, int id) {
+  char *s = calloc(1, sizeof(char));
+
+  if (ast->type == AST_NUM) {
+    const char *template = "  $%d";
+    s = realloc(s, (strlen(template) + 256) * sizeof(char));
+    sprintf(s, template, ast->int_val);
+  } else {
+    const char *template = "  %d(%%esp)";
+    s = realloc(s, (strlen(template) + 4) * sizeof(char));
+    sprintf(s, template, id);
+  }
+  return s;
+}
 
 char *as_f_fn_def(AST_T *ast) {
   const char *template = ".global %s\n"
                          "%s:\n"
                          "%s\n"
+                         "  pushl %%ebp\n"
+                         "  movl %%esp, %%ebp\n"
                          "%s\n";
 
   char *args = as_f_args(ast->args);
@@ -39,19 +54,6 @@ char *as_f_fn_def(AST_T *ast) {
 
 char *as_f_fn_call(AST_T *ast) {
   char *s = calloc(1, sizeof(char));
-
-  // if (strcmp(ast->name, "return") == 0) {
-  //   AST_T *arg1 = (AST_T *)ast->value->children->size
-  //                     ? ast->value->children->items[0]
-  //                     : (void *)0;
-  //   const char *template = "  movl $%d, %%eax\n"
-  //                          "  ret\n";
-  //
-  //   char *ret = calloc(strlen(template) + 128, sizeof(char));
-  //   sprintf(ret, template, arg1 ? arg1->int_val : 0);
-  //   s = realloc(s, (strlen(ret) + 1) * sizeof(char));
-  //   strcat(s, ret);
-  // }
 
   return s;
 }
@@ -82,11 +84,25 @@ char *as_f_id(AST_T *ast) {
 char *as_f_ret(AST_T *ast) {
   char *s = calloc(1, sizeof(char));
 
-  const char *template = "  movl $%d, %%eax\n"
+  char *var_s = calloc(3, sizeof(char));
+  var_s[0] = '$';
+  var_s[1] = '0';
+  var_s[2] = '\0';
+
+  if (ast->value) {
+    char *as_var_s = as_f_var(ast->value, 8);
+    var_s = realloc(var_s, (strlen(as_var_s) + 1) * sizeof(char));
+    strcpy(var_s, as_var_s);
+    free(as_var_s);
+  }
+
+  const char *template = "  movl %s, %%eax\n"
+                         "  movl %%ebp, %%esp\n"
+                         "  popl %%ebp\n"
                          "  ret\n";
 
   char *ret = calloc(strlen(template) + 128, sizeof(char));
-  sprintf(ret, template, ast->int_val ? ast->int_val : 0);
+  sprintf(ret, template, var_s);
   s = realloc(s, (strlen(ret) + 1) * sizeof(char));
   strcat(s, ret);
 
@@ -97,7 +113,9 @@ char *as_f_root(AST_T *ast) {
   const char *section_text = ".section .text\n"
                              ".global _start\n"
                              "_start:\n"
+                             "  pushl 0(\%esp)\n"
                              "  call main\n"
+                             "  addl $4, \%esp\n"
                              "  movl \%eax, \%ebx\n"
                              "  movl $1, \%eax\n"
                              "  int $0x80\n\n";
@@ -122,7 +140,7 @@ char *as_f(AST_T *ast) {
     next_val = as_f_compound(ast);
     break;
   case AST_VAR_DEF:
-    next_val = as_f_var(ast);
+    next_val = as_f_var(ast, 0);
     break;
   case AST_FN_DEF:
     next_val = as_f_fn_def(ast);
