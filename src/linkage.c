@@ -1,6 +1,8 @@
 #include "include/linkage.h"
+#include "include/AST.h"
 #include "include/as_frontend.h"
 #include "include/io.h"
+#include "include/list.h"
 #include "include/parser.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -35,7 +37,7 @@ void lk_compile(char *src) {
   parser_T *parser = init_parser(lexer);
   AST_T *root = parser_parse(parser);
 
-  char *s = as_f_root(root);
+  char *s = as_f_root(root, init_list(sizeof(struct AST *)));
 
   lk_write_file("a.s", s);
   sh("as --32 a.s -o a.o");

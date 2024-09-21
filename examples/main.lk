@@ -1,7 +1,3 @@
 fn main (argc: num, argv: arr<str>) : int {
-  return argc
-}
-
-fn foo () {
-  return 0
+  return argv[1]
 }

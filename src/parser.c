@@ -144,6 +144,9 @@ AST_T *parser_parse_id(parser_T *parser, int fn_name) {
     if (parser->token->type == TK_LPAREN && fn_name != 1) {
       ast->type = AST_FN_CALL;
       ast->value = parser_parse_args(parser);
+    } else if (parser->token->type == TK_LSQR) {
+      ast->type = AST_ACCESS;
+      ast->value = parser_parse_list(parser);
     }
   }
   return ast;
@@ -210,6 +213,31 @@ AST_T *parser_parse_paren(parser_T *parser) {
   return ast;
 }
 
+AST_T *parser_parse_list(parser_T *parser) {
+  parser_eat(parser, TK_LSQR);
+
+  AST_T *ast = init_ast(AST_COMPOUND);
+
+  if (parser->token->type != TK_RSQR)
+    list_push(ast->children, parser_parse_expr(parser));
+
+  while (parser->token->type == TK_COMMA) {
+    parser_eat(parser, TK_COMMA);
+    list_push(ast->children, parser_parse_expr(parser));
+  }
+
+  if (parser->token->type != TK_RSQR) {
+    printf("\e[31m[Parser Error]: Expected closing parenthesis after opening "
+           "parenthesis.\n  Found %s instead.\e[0m\n",
+           tok_t_to_str(parser->token->type));
+    exit(1);
+  }
+
+  parser_eat(parser, TK_RSQR);
+
+  return ast;
+}
+
 AST_T *parser_parse_expr(parser_T *parser) {
   switch (parser->token->type) {
   case TK_ID:
@@ -224,6 +252,8 @@ AST_T *parser_parse_expr(parser_T *parser) {
     return parser_parse_paren(parser);
   case TK_RET:
     return parser_parse_ret(parser);
+  case TK_LSQR:
+    return parser_parse_list(parser);
   default: {
     printf("\e[31m[Parser Error]: Unexpected token %s.\e[0m\n",
            tok_t_to_str(parser->token->type));

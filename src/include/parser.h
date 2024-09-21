@@ -28,6 +28,8 @@ AST_T *parser_parse_args(parser_T *parser);
 
 AST_T *parser_parse_paren(parser_T *parser);
 
+AST_T *parser_parse_list(parser_T *parser);
+
 AST_T *parser_parse_expr(parser_T *parser);
 
 AST_T *parser_parse_compound(parser_T *parser);

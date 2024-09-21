@@ -16,6 +16,7 @@ typedef struct AST {
     AST_FN_CALL,
     AST_VAR_CALL,
     AST_NUM,
+    AST_ACCESS,
     AST_FN_ARGS,
   } type;
 
