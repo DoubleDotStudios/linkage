@@ -38,6 +38,8 @@ foo += 2 # foo = foo + 2
 foo *= 3 # foo = foo * 3
 foo /= 3 # foo = foo / 3
 foo -= 2 # foo = foo - 2
+foo ^= 2 # foo = foo ^ 2
+foo `= 2 # foo = foo ` 2
 ```
 
 ### Binary Operations
