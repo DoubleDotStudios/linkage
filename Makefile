@@ -10,6 +10,7 @@ $(exec): $(objects)
 	gcc -c $(flags) $< -o $@
 
 clean:
+	- rm vgcore.*
 	- rm *.out
 	- rm *.o
 	- rm *.a
