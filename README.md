@@ -5,6 +5,22 @@ It has easy to use syntax and a simple compiler.
 
 ---
 
+## Compilation
+
+Compilation using Linkage is simple.
+
+```sh
+llsc file/to/compile.lk <arguments>
+```
+
+Then the compiled file can be run.
+
+```sh
+./executable_name <arguments>
+```
+
+---
+
 ## Syntax
 
 Linkage's syntax is as follows:
