@@ -33,7 +33,7 @@ static char *sh(const char *cmd) {
   return output;
 }
 
-void lk_compile(char *src) {
+void lk_compile(char *src, const char *name) {
   lexer_T *lexer = init_lexer(src);
   parser_T *parser = init_parser(lexer);
   AST_T *root = parser_parse(parser);
@@ -44,13 +44,30 @@ void lk_compile(char *src) {
 
   char *s = as_f_root(opt_root, init_list(sizeof(struct AST *)));
 
-  lk_write_file("a.s", s);
-  sh("as --32 a.s -o a.o");
-  sh("ld a.o -o a -m elf_i386");
+  char *n = strrchr(name, '/') + 1;
+  n = strtok(n, ".");
+
+  char *as = "%s.s";
+  char *as_s = calloc(strlen(as) + strlen(n), sizeof(char));
+  sprintf(as_s, as, n);
+
+  lk_write_file(as_s, s); // Create asm file
+
+  as = "as --32 %s.s -o %s.o";
+  as_s = realloc(as_s, (strlen(as) + (strlen(n) * 2) * sizeof(char)));
+  sprintf(as_s, as, n, n);
+
+  sh(as_s); // Create object file
+
+  as = "ld %s.o -o %s -m elf_i386";
+  as_s = realloc(as_s, (strlen(as) + (strlen(n) * 2) * sizeof(char)));
+  sprintf(as_s, as, n, n);
+
+  sh(as_s); // Create executable
 }
 
 void lk_compile_file(const char *filename) {
   char *src = lk_read_file(filename);
-  lk_compile(src);
+  lk_compile(src, filename);
   free(src);
 }

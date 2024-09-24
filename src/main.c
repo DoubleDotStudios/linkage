@@ -1,5 +1,4 @@
 #include "include/linkage.h"
-#include "include/macros.h"
 #include <stdio.h>
 
 int main(int argc, char *argv[]) {
