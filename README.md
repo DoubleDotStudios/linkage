@@ -28,7 +28,6 @@ Linkage's syntax is as follows:
 ```
 # main.lk
 
-# main function
 fn main (argc: num, argv: arr<str>): int {
     return argc # argc can be replaced with other integers
 }
