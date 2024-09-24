@@ -9,13 +9,13 @@ It has easy to use syntax and a simple compiler.
 
 Compilation using Linkage is simple.
 
-```sh
+```console
 llsc file/to/compile.lk <arguments>
 ```
 
 Then the compiled file can be run.
 
-```sh
+```console
 ./executable_name <arguments>
 ```
 
