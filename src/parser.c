@@ -4,6 +4,7 @@
 #include "include/list.h"
 #include "include/token.h"
 #include "include/types.h"
+#include "include/utils.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -111,6 +112,16 @@ AST_T *parser_parse_num(parser_T *parser) {
   return ast;
 }
 
+AST_T *parser_parse_str(parser_T *parser) {
+  char *str_val = mkstr(parser->token->value);
+  parser_eat(parser, TK_STR);
+
+  AST_T *ast = init_ast(AST_STR);
+  ast->string_val = str_val;
+
+  return ast;
+}
+
 AST_T *parser_parse_id(parser_T *parser, int fn_name) {
   if (parser->token->type != TK_ID) {
     printf("\e[31m[Parser Error]: Expected identifier but found token %s "
@@ -118,6 +129,7 @@ AST_T *parser_parse_id(parser_T *parser, int fn_name) {
            tok_t_to_str(parser->token->type));
     exit(1);
   }
+
   char *value = calloc(strlen(parser->token->value) + 1, sizeof(char));
   strcpy(value, parser->token->value);
   parser_eat(parser, TK_ID);
@@ -238,6 +250,23 @@ AST_T *parser_parse_list(parser_T *parser) {
   return ast;
 }
 
+AST_T *parser_parse_pipe(parser_T *parser) {
+  parser_eat(parser, TK_PIPE);
+  AST_T *ast = init_ast(AST_NOOP);
+
+  if (parser->token->type == TK_ID) {
+    AST_T *ast = init_ast(AST_LANG);
+
+    ast->name = parser_parse_id(parser, 0)->name;
+    parser_eat(parser, TK_PIPE);
+    parser_eat(parser, TK_LBRACE);
+    // ast->value = parser_parse_foreign(parser);
+    parser_eat(parser, TK_LBRACE);
+  }
+
+  return ast;
+}
+
 AST_T *parser_parse_expr(parser_T *parser) {
   switch (parser->token->type) {
   case TK_ID:
@@ -254,6 +283,10 @@ AST_T *parser_parse_expr(parser_T *parser) {
     return parser_parse_ret(parser);
   case TK_LSQR:
     return parser_parse_list(parser);
+  case TK_PIPE:
+    return parser_parse_pipe(parser);
+  case TK_STR:
+    return parser_parse_str(parser);
   default: {
     printf("\e[31m[Parser Error]: Unexpected token %s.\e[0m\n",
            tok_t_to_str(parser->token->type));

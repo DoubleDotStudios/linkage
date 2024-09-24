@@ -54,7 +54,7 @@ char *as_f_def(AST_T *ast, list_T *list) {
 
   char *s = calloc(1, sizeof(char));
 
-  const char *template = "# ;%s = %d";
+  const char *template = "/* ;%s = %d */";
 
   if (var) {
     printf("\e[31m[Codegen Error]: %s already defined.\e[0m\n", ast->name);
@@ -71,7 +71,7 @@ char *as_f_def(AST_T *ast, list_T *list) {
 char *as_f_fn_def(AST_T *ast, list_T *list) {
   const char *template = ".global %s\n"
                          "%s:\n"
-                         "%s\n"
+                         "%s"
                          "pushl %%ebp\n"
                          "movl %%esp, %%ebp\n"
                          "%s\n";
@@ -91,6 +91,12 @@ char *as_f_fn_def(AST_T *ast, list_T *list) {
 char *as_f_fn_call(AST_T *ast, list_T *list) {
   char *s = calloc(1, sizeof(char));
 
+  const char *template = "/* call: %s */\n";
+
+  s = realloc(s, (strlen(template) + 128) * sizeof(char));
+
+  sprintf(s, template, ast->name);
+
   return s;
 }
 
@@ -108,7 +114,16 @@ char *as_f_args(AST_T *ast, list_T *list) {
   return val;
 }
 
-char *as_f_num(AST_T *ast, list_T *list) {}
+char *as_f_num(AST_T *ast, list_T *list) {
+  const char *template = "$%d";
+
+  char *s = calloc(strlen(template) + 128, sizeof(char));
+  sprintf(s, template, ast->int_val);
+
+  return s;
+}
+
+char *as_f_str(AST_T *ast, list_T *list) { return ast->string_val; }
 
 char *as_f_id(AST_T *ast, list_T *list) {
   const char *template = "/*id %s*/\n";
@@ -133,6 +148,8 @@ char *as_f_ret(AST_T *ast, list_T *list) {
       as_var_s = as_f_var(ast->value, list);
     else if (ast->value->type == AST_ACCESS)
       as_var_s = as_f_access(ast->value, list);
+    else if (ast->value->type == AST_NUM)
+      as_var_s = as_f_num(ast->value, list);
     else
       as_var_s = var_s;
     var_s = realloc(var_s, (strlen(as_var_s) + 1) * sizeof(char));
@@ -219,7 +236,7 @@ char *as_f(AST_T *ast, list_T *list) {
     next_val = as_f_compound(ast, list);
     break;
   case AST_NUM:
-    next_val = as_f_compound(ast, list);
+    next_val = as_f_num(ast, list);
     break;
   case AST_ID:
     next_val = as_f_id(ast, list);
@@ -229,6 +246,9 @@ char *as_f(AST_T *ast, list_T *list) {
     break;
   case AST_ACCESS:
     next_val = as_f_access(ast, list);
+    break;
+  case AST_STR:
+    next_val = as_f_str(ast, list);
     break;
   default:
     printf(

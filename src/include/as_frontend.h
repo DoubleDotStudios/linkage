@@ -7,6 +7,7 @@ char *as_fn_def(AST_T *ast, list_T *list);
 char *as_f_args(AST_T *ast, list_T *list);
 char *as_fn_call(AST_T *ast, list_T *list);
 char *as_f_num(AST_T *ast, list_T *list);
+char *as_f_str(AST_T *ast, list_T *list);
 char *as_f_id(AST_T *ast, list_T *list);
 char *as_f_access(AST_T *ast, list_T *list);
 char *as_f_list(AST_T *ast, int id, list_T *list);

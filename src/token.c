@@ -19,6 +19,8 @@ char *tok_t_to_str(int type) {
     return "TK_ID";
   case TK_NUM:
     return "TK_NUM";
+  case TK_STR:
+    return "TK_STR";
   case TK_VAR:
     return "TK_VAR";
   case TK_CONST:
@@ -43,8 +45,8 @@ char *tok_t_to_str(int type) {
     return "TK_COLON";
   case TK_COMMA:
     return "TK_COMMA";
-  case TK_TYPE:
-    return "TK_TYPE";
+  case TK_PIPE:
+    return "TK_PIPE";
 
   case TK_PLUS:
     return "TK_PLUS";
@@ -85,6 +87,8 @@ char *tok_t_to_str(int type) {
     return "TK_NE";
   case TK_EQEQ:
     return "TK_EQEQ";
+  case TK_OR:
+    return "TK_OR";
 
   case TK_EOF:
     return "TK_EOF";

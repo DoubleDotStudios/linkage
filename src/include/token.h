@@ -7,6 +7,7 @@ typedef struct TOKENS {
     TK_RET,   //
     TK_ID,    //
     TK_NUM,   //
+    TK_STR,   //
     TK_VAR,   //
     TK_CONST, //
 
@@ -20,7 +21,8 @@ typedef struct TOKENS {
     TK_EQ,    //
     TK_COLON, //
     TK_COMMA, //
-    TK_TYPE,  //
+    TK_PIPE,  //
+    TK_LANG,  //
 
     TK_PLUS, //
     TK_MIN,  //
@@ -43,6 +45,7 @@ typedef struct TOKENS {
     TK_LTE,  //
     TK_NE,   //
     TK_EQEQ, //
+    TK_OR,   //
 
     TK_EOF //
   } type;

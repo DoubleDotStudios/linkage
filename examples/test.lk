@@ -1,2 +1,2 @@
-|rust|{ print!("Hello, World!"); }
+|rust|{ println!("Hello, World!"); }
 |cpp|{ std::cout << "Hello, World!" << std::endl; }

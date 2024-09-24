@@ -2,6 +2,8 @@
 #define LK_AST_H
 #include "list.h"
 
+struct VISITOR;
+
 typedef struct AST {
   enum {
     AST_COMPOUND,
@@ -18,14 +20,19 @@ typedef struct AST {
     AST_NUM,
     AST_ACCESS,
     AST_FN_ARGS,
+    AST_STR,
+    AST_LANG
   } type;
 
   list_T *children;
   char *name;
+  char *string_val;
   struct AST *value;
   int int_val;
   int data_type;
   struct AST *args;
+  struct AST *(*fptr)(struct VISITOR *visitor, struct AST *node,
+                      struct LIST *list);
 } AST_T;
 
 AST_T *init_ast(int type);

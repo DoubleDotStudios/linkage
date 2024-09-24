@@ -1,3 +1,4 @@
 fn main (argc: num, argv: arr<str>) : int {
-  return argv[1]
+  print("llsc")
+  return 16
 }

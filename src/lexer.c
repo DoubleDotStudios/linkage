@@ -78,6 +78,22 @@ token_T *lexer_parse_number(lexer_T *lexer) {
   return init_token(val, TK_NUM);
 }
 
+token_T *lexer_parse_str(lexer_T *lexer) {
+  char *val = calloc(1, sizeof(char));
+
+  lexer_advance(lexer);
+
+  while (lexer->c != '"') {
+    val = realloc(val, (strlen(val) + 2) * sizeof(char));
+    strcat(val, (char[]){lexer->c, 0});
+    lexer_advance(lexer);
+  }
+
+  lexer_advance(lexer);
+
+  return init_token(val, TK_STR);
+}
+
 token_T *lexer_next_token(lexer_T *lexer) {
   while (lexer->c != '\0') {
     lexer_skip_whitespace(lexer);
@@ -89,6 +105,7 @@ token_T *lexer_next_token(lexer_T *lexer) {
       return lexer_parse_number(lexer);
 
     switch (lexer->c) {
+
     case '=': {
       if (lexer_peek(lexer, 1) == '=')
         return lexer_advance_with(
@@ -173,8 +190,14 @@ token_T *lexer_next_token(lexer_T *lexer) {
       return lexer_advance_with(lexer, init_token(",", TK_COMMA));
     case ':':
       return lexer_advance_with(lexer, init_token(":", TK_COLON));
-    case '|':
-      return lexer_advance_with(lexer, init_token("|", TK_TYPE));
+    case '|': {
+      if (lexer_peek(lexer, 1) == '|')
+        return lexer_advance_with(
+            lexer, lexer_advance_with(lexer, init_token("||", TK_OR)));
+      return lexer_advance_with(lexer, init_token("|", TK_PIPE));
+    } break;
+    case '"':
+      return lexer_parse_str(lexer);
 
     // Special characters
     case '\0':

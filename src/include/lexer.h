@@ -26,5 +26,7 @@ token_T *lexer_parse_id(lexer_T *lexer);
 
 token_T *lexer_parse_number(lexer_T *lexer);
 
+token_T *lexer_parse_string(lexer_T *lexer);
+
 token_T *lexer_next_token(lexer_T *lexer);
 #endif // !LK_LEXER_H
