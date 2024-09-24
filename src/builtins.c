@@ -7,7 +7,6 @@
 #include <string.h>
 
 AST_T *fptr_print(visitor_T *visitor, AST_T *node, list_T *list) {
-  printf("her\n");
   AST_T *ast = init_ast(AST_STR);
 
   AST_T *arg = list->size ? (AST_T *)list->items[0] : (AST_T *)0;
