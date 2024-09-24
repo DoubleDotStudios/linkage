@@ -47,7 +47,7 @@ fn main (argc: num, argv: arr<str>): int {
 ### Reassignment
 
 ```
-foo = bar #
+foo = bar
 foo += 2 # foo = foo + 2
 foo *= 3 # foo = foo * 3
 foo /= 3 # foo = foo / 3
