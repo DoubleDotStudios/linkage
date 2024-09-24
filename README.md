@@ -19,8 +19,6 @@ Then the compiled file can be run.
 ./executable_name <arguments>
 ```
 
----
-
 ## Syntax
 
 Linkage's syntax is as follows:
