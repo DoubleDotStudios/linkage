@@ -12,6 +12,7 @@ AST_T *fptr_print(visitor_T *visitor, AST_T *node, list_T *list) {
   AST_T *arg = list->size ? (AST_T *)list->items[0] : (AST_T *)0;
   char *str = 0;
 
+  int n_chunks = 0;
   char *hex = 0;
 
   if (arg) {
@@ -21,19 +22,36 @@ AST_T *fptr_print(visitor_T *visitor, AST_T *node, list_T *list) {
       str = calloc(128, sizeof(char));
       sprintf(str, "%d", arg->int_val);
     }
-    hex = str_to_hex(str);
+
+    char **chunks = str_to_hex_chunks(str, &n_chunks);
+
+    char *strpush = calloc(1, sizeof(char));
+    const char *pushtemplate = "pushl $0x%s\n";
+
+    for (int i = 0; i < n_chunks; i++) {
+      char *pushex = chunks[(n_chunks - i) - 1];
+      char *push =
+          calloc(strlen(pushex) + strlen(pushtemplate) + 1, sizeof(char));
+      sprintf(push, pushtemplate, pushex);
+      strpush =
+          realloc(strpush, (strlen(strpush) + strlen(push) + 1) * sizeof(char));
+      strcat(strpush, push);
+    }
+
+    hex = strpush;
   }
 
   const char *template = "movl $4, %%eax\n"
                          "movl $1, %%ebx\n"
-                         "pushl $0x%s\n"
+                         "%s"
                          "movl %%esp, %%ecx\n"
+                         "addl $%d, %%esp\n"
                          "movl $%d, %%edx\n"
                          "int $0x80\n";
 
   char *asmb =
       calloc((hex ? strlen(hex) : 0) + strlen(template) + 1, sizeof(char));
-  sprintf(asmb, template, hex ? hex : "$0", 8);
+  sprintf(asmb, template, hex ? hex : "$0", strlen(str) * 2, n_chunks * 4);
   ast->string_val = asmb;
   free(hex);
 
