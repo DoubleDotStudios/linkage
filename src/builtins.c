@@ -9,10 +9,9 @@
 AST_T *fptr_print(visitor_T *visitor, AST_T *node, list_T *list) {
   AST_T *ast = init_ast(AST_STR);
 
-  AST_T *arg = list->size ? (AST_T *)list->items[0] : (AST_T *)0;
-  char *str = 0;
-
-  int n_chunks = 0;
+  AST_T *arg = list->size ? (AST_T *)(AST_T *)list->items[0] : (AST_T *)0;
+  char *str = arg ? arg->string_val : 0;
+  unsigned int nchunks = 0;
   char *hex = 0;
 
   if (arg) {
@@ -23,19 +22,21 @@ AST_T *fptr_print(visitor_T *visitor, AST_T *node, list_T *list) {
       sprintf(str, "%d", arg->int_val);
     }
 
-    char **chunks = str_to_hex_chunks(str, &n_chunks);
+    list_T *chunks = str_to_hex_chunks(str);
+    nchunks = chunks->size;
 
     char *strpush = calloc(1, sizeof(char));
     const char *pushtemplate = "pushl $0x%s\n";
 
-    for (int i = 0; i < n_chunks; i++) {
-      char *pushex = chunks[(n_chunks - i) - 1];
+    for (unsigned int i = 0; i < chunks->size; i++) {
+      char *pushex = (char *)chunks->items[(chunks->size - i) - 1];
       char *push =
           calloc(strlen(pushex) + strlen(pushtemplate) + 1, sizeof(char));
       sprintf(push, pushtemplate, pushex);
       strpush =
           realloc(strpush, (strlen(strpush) + strlen(push) + 1) * sizeof(char));
       strcat(strpush, push);
+      free(push);
     }
 
     hex = strpush;
@@ -51,7 +52,7 @@ AST_T *fptr_print(visitor_T *visitor, AST_T *node, list_T *list) {
 
   char *asmb =
       calloc((hex ? strlen(hex) : 0) + strlen(template) + 1, sizeof(char));
-  sprintf(asmb, template, hex ? hex : "$0", strlen(str) * 2, n_chunks * 4);
+  sprintf(asmb, template, hex ? hex : "$0", nchunks * 4, nchunks * 4);
   ast->string_val = asmb;
   free(hex);
 

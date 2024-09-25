@@ -1,4 +1,4 @@
 fn main (argc: num, argv: arr<str>) : int {
   print("Hello, World!\n")
-  return 16
+  return 0
 }
