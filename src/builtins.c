@@ -15,31 +15,37 @@ AST_T *fptr_print(visitor_T *visitor, AST_T *node, list_T *list) {
   char *hex = 0;
 
   if (arg) {
-    if (arg->type == AST_STR)
-      str = arg->string_val;
-    else if (arg->type == AST_NUM) {
+    if (arg->type == AST_NUM) {
       str = calloc(128, sizeof(char));
-      sprintf(str, "%d", arg->int_val);
+      sprintf(str, "%d\n", arg->int_val);
+    } else if (arg->type == AST_VAR_CALL) {
+      return arg;
+    } else if (arg->type == AST_ACCESS) {
+      return arg;
+    } else if (arg->type == AST_STR) {
+      str = arg->string_val;
     }
 
-    list_T *chunks = str_to_hex_chunks(str);
-    nchunks = chunks->size;
+    if (str) {
+      list_T *chunks = str_to_hex_chunks(str);
+      nchunks = chunks->size;
 
-    char *strpush = calloc(1, sizeof(char));
-    const char *pushtemplate = "pushl $0x%s\n";
+      char *strpush = calloc(1, sizeof(char));
+      const char *pushtemplate = "pushl $0x%s\n";
 
-    for (unsigned int i = 0; i < chunks->size; i++) {
-      char *pushex = (char *)chunks->items[(chunks->size - i) - 1];
-      char *push =
-          calloc(strlen(pushex) + strlen(pushtemplate) + 1, sizeof(char));
-      sprintf(push, pushtemplate, pushex);
-      strpush =
-          realloc(strpush, (strlen(strpush) + strlen(push) + 1) * sizeof(char));
-      strcat(strpush, push);
-      free(push);
+      for (unsigned int i = 0; i < chunks->size; i++) {
+        char *pushex = (char *)chunks->items[(chunks->size - i) - 1];
+        char *push =
+            calloc(strlen(pushex) + strlen(pushtemplate) + 1, sizeof(char));
+        sprintf(push, pushtemplate, pushex);
+        strpush = realloc(strpush,
+                          (strlen(strpush) + strlen(push) + 1) * sizeof(char));
+        strcat(strpush, push);
+        free(push);
+      }
+
+      hex = strpush;
     }
-
-    hex = strpush;
   }
 
   const char *template = "movl $4, %%eax\n"
@@ -52,7 +58,7 @@ AST_T *fptr_print(visitor_T *visitor, AST_T *node, list_T *list) {
 
   char *asmb =
       calloc((hex ? strlen(hex) : 0) + strlen(template) + 1, sizeof(char));
-  sprintf(asmb, template, hex ? hex : "$0", nchunks * 4, nchunks * 4);
+  sprintf(asmb, template, hex ? hex : "pushl $0\n", nchunks * 4, nchunks * 4);
   ast->string_val = asmb;
   free(hex);
 

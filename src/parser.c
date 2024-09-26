@@ -157,8 +157,11 @@ AST_T *parser_parse_id(parser_T *parser, int fn_name) {
       ast->type = AST_FN_CALL;
       ast->value = parser_parse_args(parser);
     } else if (parser->token->type == TK_LSQR) {
+      parser_eat(parser, TK_LSQR);
       ast->type = AST_ACCESS;
-      ast->value = parser_parse_list(parser);
+      ast->int_val = atoi(parser->token->value);
+      parser_eat(parser, TK_NUM);
+      parser_eat(parser, TK_RSQR);
     }
   }
   return ast;

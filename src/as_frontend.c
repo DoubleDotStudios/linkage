@@ -171,20 +171,13 @@ char *as_f_ret(AST_T *ast, list_T *list) {
 }
 
 char *as_f_access(AST_T *ast, list_T *list) {
-  AST_T *left = var_lookup(ast->name, list);
+  int stack_pos = ast->id;
 
-  char *left_as = as_f_var(left, list);
+  const char *template = "/* access */\n"
+                         "pushl %d(%%esp)\n";
 
-  AST_T *arg =
-      ast->value->children->size ? ast->value->children->items[0] : (void *)0;
-
-  const char *template = "%s, %%eax\n"
-                         "movl %d(%%eax)";
-
-  char *s = calloc(strlen(template) + strlen(left_as) + 128, sizeof(char));
-  sprintf(s, template, left_as, (arg ? arg->int_val : 0) * 4);
-
-  free(left_as);
+  char *s = calloc(strlen(template) + 128, sizeof(char));
+  sprintf(s, template, (stack_pos) * 4);
 
   return s;
 }

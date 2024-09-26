@@ -1,4 +1,5 @@
 fn main (argc: num, argv: arr<str>) : int {
   print("Hello, World!\n")
+  print("This is the linkage compiler!\n")
   return 0
 }

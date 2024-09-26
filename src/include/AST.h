@@ -30,6 +30,7 @@ typedef struct AST {
   struct AST *value;
   int int_val;
   int data_type;
+  int id;
   struct AST *args;
   struct AST *(*fptr)(struct VISITOR *visitor, struct AST *node,
                       struct LIST *list);
