@@ -3,7 +3,7 @@
 #include "list.h"
 #include "visitor.h"
 
-AST_T *fptr_print(visitor_T *visitor, AST_T *node, list_T *list);
+AST_T *fptr_print(visitor_T *visitor, AST_T *node, list_T *args);
 void register_builtins(list_T *list);
 
 #endif // !LK_BUILTINS_H

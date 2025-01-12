@@ -79,12 +79,12 @@ token_T *lexer_parse_number(lexer_T *lexer) {
   return init_token(val, TK_NUM);
 }
 
-token_T *lexer_parse_str(lexer_T *lexer) {
+token_T *lexer_parse_str(lexer_T *lexer, char symbol) {
   char *val = calloc(1, sizeof(char));
 
   lexer_advance(lexer);
 
-  while (lexer->c != '"') {
+  while (lexer->c != symbol) {
     val = realloc(val, (strlen(val) + 2) * sizeof(char));
     strcat(val, (char[]){lexer->c, 0});
     lexer_advance(lexer);
@@ -201,7 +201,9 @@ token_T *lexer_next_token(lexer_T *lexer) {
       return lexer_advance_with(lexer, init_token("|", TK_PIPE));
     } break;
     case '"':
-      return lexer_parse_str(lexer);
+      return lexer_parse_str(lexer, '"');
+    case '\'':
+      return lexer_parse_str(lexer, '\'');
 
     // Special characters
     case '\0':

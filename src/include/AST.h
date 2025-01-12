@@ -33,7 +33,7 @@ typedef struct AST {
   int id;
   struct AST *args;
   struct AST *(*fptr)(struct VISITOR *visitor, struct AST *node,
-                      struct LIST *list);
+                      struct LIST *args);
 } AST_T;
 
 AST_T *init_ast(int type);

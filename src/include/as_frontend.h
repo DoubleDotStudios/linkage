@@ -3,6 +3,7 @@
 #include "AST.h"
 #include "list.h"
 char *as_f(AST_T *ast, list_T *list);
+char *as_f_var(AST_T *ast, list_T *list);
 char *as_fn_def(AST_T *ast, list_T *list);
 char *as_f_args(AST_T *ast, list_T *list);
 char *as_fn_call(AST_T *ast, list_T *list);

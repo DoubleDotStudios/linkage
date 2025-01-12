@@ -5,11 +5,32 @@
 #include <stdlib.h>
 #include <string.h>
 
+const char STRLEN_TEMPLATE[] = ".type strlen, @function\n"
+                               " strlen:\n"
+                               "   pushl %ebp\n"
+                               "   movl %esp, %ebp\n"
+                               "   movl $0, %edi\n"
+                               "   movl 8(%esp), %eax\n"
+                               "   jmp strlenloop\n"
+                               "\n"
+                               " strlenloop:\n"
+                               "   movb (%eax, %edi, 1), %cl\n"
+                               "   cmpb $0, %cl\n"
+                               "   je strlenend\n"
+                               "   addl $1, %edi\n"
+                               "   jmp strlenloop\n"
+                               "\n"
+                               " strlenend:\n"
+                               "   movl %edi, %eax\n"
+                               "   movl %ebp, %esp\n"
+                               "   popl %ebp\n"
+                               "   ret\n";
+
 static AST_T *var_lookup(char *name, list_T *list) {
-  for (int i = 0; i < (int)list->size; i++) {
+  for (unsigned int i = 0; i < (int)list->size; i++) {
     AST_T *ast = (AST_T *)list->items[i];
 
-    if (ast->type != AST_VAR_DEF || !ast->name)
+    if (!ast->name)
       continue;
 
     if (strcmp(ast->name, name) == 0)
@@ -42,7 +63,7 @@ char *as_f_var(AST_T *ast, list_T *list) {
     exit(1);
   }
 
-  const char *template = "%d(%%esp)";
+  const char *template = "pushl %d(%%esp)\n";
   s = realloc(s, (strlen(template) + 4) * sizeof(char));
   sprintf(s, template, var->int_val);
 
@@ -115,7 +136,7 @@ char *as_f_args(AST_T *ast, list_T *list) {
 }
 
 char *as_f_num(AST_T *ast, list_T *list) {
-  const char *template = "$%d";
+  const char *template = "pushl $%d\n";
 
   char *s = calloc(strlen(template) + 128, sizeof(char));
   sprintf(s, template, ast->int_val);
@@ -157,7 +178,8 @@ char *as_f_ret(AST_T *ast, list_T *list) {
     free(as_var_s);
   }
 
-  const char *template = "movl %s, %%eax\n"
+  const char *template = "%s\n"
+                         "popl %%eax\n"
                          "movl %%ebp, %%esp\n"
                          "popl %%ebp\n"
                          "ret\n";
@@ -171,13 +193,13 @@ char *as_f_ret(AST_T *ast, list_T *list) {
 }
 
 char *as_f_access(AST_T *ast, list_T *list) {
-  int stack_pos = ast->id;
+  int offset = 12 + (ast->int_val * 4);
 
   const char *template = "/* access */\n"
-                         "pushl %d(%%esp)\n";
+                         "pushl %d(%%ebp)\n";
 
   char *s = calloc(strlen(template) + 128, sizeof(char));
-  sprintf(s, template, (stack_pos) * 4);
+  sprintf(s, template, offset);
 
   return s;
 }
@@ -186,10 +208,11 @@ char *as_f_root(AST_T *ast, list_T *list) {
   const char *section_text = ".section .text\n"
                              ".global _start\n"
                              "_start:\n"
-                             "pushl 0(\%esp)\n"
-                             "pushl 4(\%esp)\n"
+                             "movl \%esp, \%ebp\n"
+                             // "pushl 0(\%esp)\n"
+                             // "pushl 4(\%esp)\n"
                              "call main\n"
-                             "addl $4, \%esp\n"
+                             // "addl $4, \%esp\n"
                              "movl \%eax, \%ebx\n"
                              "movl $1, \%eax\n"
                              "int $0x80\n\n";
@@ -201,6 +224,10 @@ char *as_f_root(AST_T *ast, list_T *list) {
 
   val = realloc(val, (strlen(val) + strlen(next_val) + 1) * sizeof(char));
   strcat(val, next_val);
+
+  val =
+      realloc(val, (strlen(val) + strlen(STRLEN_TEMPLATE) + 1) * sizeof(char));
+  strcat(val, STRLEN_TEMPLATE);
 
   return val;
 }

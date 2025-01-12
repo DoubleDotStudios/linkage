@@ -10,8 +10,9 @@ static AST_T *var_lookup(char *name, list_T *list) {
   for (int i = 0; i < (int)list->size; i++) {
     AST_T *ast = (AST_T *)list->items[i];
 
-    if (!ast->name)
+    if (!ast->name) {
       continue;
+    }
 
     if (strcmp(ast->name, name) == 0)
       return ast;
@@ -34,7 +35,7 @@ AST_T *visitor_visit(visitor_T *visitor, AST_T *node, list_T *list) {
   case AST_STR:
     return node;
   case AST_COMPOUND:
-    return visitor_visit_compound(visitor, node, list);
+    return visitor_visit_compound(visitor, node, list, 0);
     break;
   case AST_VAR_CALL:
     return visitor_visit_var(visitor, node, list);
@@ -49,18 +50,16 @@ AST_T *visitor_visit(visitor_T *visitor, AST_T *node, list_T *list) {
     return visitor_visit_call(visitor, node, list);
     break;
   case AST_FN_ARGS:
-    return visitor_visit_compound(visitor, node, list);
+    return visitor_visit_compound(visitor, node, list, 1);
     break;
   case AST_NUM:
-    // return visitor_visit_num(visitor, node, list);
-    return node;
+    return visitor_visit_num(visitor, node, list);
     break;
   case AST_ID:
     return visitor_visit_id(visitor, node, list);
     break;
   case AST_RET:
-    // return visitor_visit_ret(visitor, node, list);
-    return node;
+    return visitor_visit_ret(visitor, node, list);
     break;
   case AST_ACCESS:
     return visitor_visit_access(visitor, node, list);
@@ -74,8 +73,11 @@ AST_T *visitor_visit(visitor_T *visitor, AST_T *node, list_T *list) {
   return node;
 }
 
-AST_T *visitor_visit_compound(visitor_T *visitor, AST_T *node, list_T *list) {
+AST_T *visitor_visit_compound(visitor_T *visitor, AST_T *node, list_T *list,
+                              int args) {
   AST_T *compound = init_ast(AST_COMPOUND);
+  if (args)
+    compound->type = AST_FN_ARGS;
 
   for (unsigned int i = 0; i < node->children->size; i++)
     list_push(compound->children,
@@ -109,9 +111,7 @@ AST_T *visitor_visit_fn_def(visitor_T *visitor, AST_T *node, list_T *list) {
 
   fn->name = node->name;
 
-  fn->args = node->args;
-
-  // fn->args = visitor_visit(visitor, node->args, list);
+  fn->args = visitor_visit(visitor, node->args, node->args->children);
 
   fn->value = visitor_visit(visitor, node->value, node->value->children);
 
@@ -121,20 +121,34 @@ AST_T *visitor_visit_fn_def(visitor_T *visitor, AST_T *node, list_T *list) {
 AST_T *visitor_visit_call(visitor_T *visitor, AST_T *node, list_T *list) {
   AST_T *var = var_lookup(node->name, visitor->object->children);
 
+  list_T *new_args = init_list(sizeof(struct AST *));
+
+  for (unsigned int i = 0; i < node->value->children->size; i++) {
+    list_push(
+        new_args,
+        visitor_visit(visitor, (AST_T *)node->value->children->items[i], list));
+  }
+
   if (var) {
     if (var->fptr) {
-      return var->fptr(visitor, var, node->value->children);
+      return var->fptr(visitor, var, new_args);
     }
   }
 
   return node;
 }
 
-AST_T *visitor_visit_num(visitor_T *visitor, AST_T *node, list_T *list) {}
+AST_T *visitor_visit_num(visitor_T *visitor, AST_T *node, list_T *list) {
+  return node;
+}
 
-AST_T *visitor_visit_id(visitor_T *visitor, AST_T *node, list_T *list) {}
+AST_T *visitor_visit_id(visitor_T *visitor, AST_T *node, list_T *list) {
+  return node;
+}
 
-AST_T *visitor_visit_ret(visitor_T *visitor, AST_T *node, list_T *list) {}
+AST_T *visitor_visit_ret(visitor_T *visitor, AST_T *node, list_T *list) {
+  return node;
+}
 
 AST_T *visitor_visit_access(visitor_T *visitor, AST_T *node, list_T *list) {
   int id = 0;

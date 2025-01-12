@@ -11,7 +11,8 @@ visitor_T *init_visitor();
 
 AST_T *visitor_visit(visitor_T *visitor, AST_T *node, list_T *list);
 
-AST_T *visitor_visit_compound(visitor_T *visitor, AST_T *node, list_T *list);
+AST_T *visitor_visit_compound(visitor_T *visitor, AST_T *node, list_T *list,
+                              int args);
 AST_T *visitor_visit_var(visitor_T *visitor, AST_T *node, list_T *list);
 AST_T *visitor_visit_def(visitor_T *visitor, AST_T *node, list_T *list);
 AST_T *visitor_visit_fn_def(visitor_T *visitor, AST_T *node, list_T *list);
