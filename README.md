@@ -2,8 +2,7 @@
 
 > [!NOTE]
 > You are on the `main` C branch.  
-> For the Rust rewrite see the `rust` branch:  
-> https://github.com/DoubleDotStudios/linkage/tree/rust
+> For the Rust rewrite see the [`rust`](https://github.com/DoubleDotStudios/linkage/tree/rust) branch.
 
 Linkage is a next generation programming language that allows for the use of other languages' features.
 It has easy to use syntax and a simple compiler.
