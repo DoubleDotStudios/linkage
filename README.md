@@ -6,5 +6,6 @@
 
 
 <div align='center'>
-    <a href='./TODO.md'><kbd> <br> Syntax <br> </kbd></a>&ensp;&ensp;
-</div>
+    <br>
+    <a href='./Syntax.md'><kbd> <br> Syntax <br> </kbd></a>&ensp;&ensp;
+</div><br><br>
