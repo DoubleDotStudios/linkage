@@ -5,8 +5,10 @@
 > For the original C version see the [`main`](https://github.com/DoubleDotStudios/linkage/tree/main) branch.
 
 
-<div align='center'>
-    <br>
-    <a href='./Syntax.md'><kbd>  Syntax  </kbd></a>&ensp;&ensp;
-    <a href='./Todo.md'><kbd>  Todo  </kbd></a>&ensp;&ensp;
+<div align="center">
+<br>
+
+  <a href='./Syntax.md'><kbd> <br> Installation <br> </kbd></a>&ensp;&ensp;
+  <a href='./TODO.md'><kbd> <br> Themes <br> </kbd></a>&ensp;&ensp;
+
 </div><br><br>
