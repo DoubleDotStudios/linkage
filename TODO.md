@@ -2,7 +2,7 @@
 
 ## Components
 
-- [ ] Lexer
+- [x] Lexer
 - [ ] Parser
 - [ ] Typechecker
 - [ ] Generator
