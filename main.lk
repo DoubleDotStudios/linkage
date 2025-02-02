@@ -1,2 +1,2 @@
 exit <- 5
-exit&&
+exit()
