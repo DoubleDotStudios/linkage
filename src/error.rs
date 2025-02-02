@@ -51,7 +51,7 @@ impl Err {
 
         let msg: String = format!(
             "[{}{}] {}\n  {}| {}\n* {}| {}\n{}| {}\n",
-            level, 1, err.msg, prev, "hi", curr, "olleh", next, "hello"
+            level, err.code, err.msg, prev, "hi", curr, "olleh", next, "hello"
         );
 
         eprintln!("{}", msg);

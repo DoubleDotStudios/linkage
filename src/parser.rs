@@ -56,12 +56,12 @@ impl<'a> Parser<'a> {
     }
 
     pub fn root(&mut self) -> AstNode {
-        let root = AstNode::new(AstType::Root);
+        let mut root = AstNode::new(AstType::Root);
 
         match root.children {
-            Some(mut children) => {
+            Some(ref mut children) => {
                 while self.token.kind != TokenKind::EOF {
-                    List::push(&mut children, self.expr());
+                    List::push(children, self.expr());
                 }
             }
             None => {
