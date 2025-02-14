@@ -1,4 +1,5 @@
 # Linkage
+---
 
 > [!NOTE]
 > You are currently on the Rust rewrite branch.  
